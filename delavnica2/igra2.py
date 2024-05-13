@@ -32,6 +32,7 @@ e2_speed=2
 blt_x=-1
 blt_y=-1
 blt_speed=8
+blts=[]
 
 while True:
     mouse_pos=pygame.mouse.get_pos()
@@ -40,6 +41,7 @@ while True:
             pygame.quit()
             exit()
         if event.type==pygame.MOUSEBUTTONDOWN:
+            blts.append([mouse_pos[0] + 15, rckt_y])
             if blt_y<0:
                 blt_x=mouse_pos[0]+15
                 blt_y=rckt_y
@@ -49,23 +51,28 @@ while True:
     if rckt_re.colliderect(e1_re) or rckt_re.colliderect(e2_re):
         pygame.quit()
         exit()
-    if blt_x>=e1_x and blt_x<=e1_x+50:
-        if blt_y>=e1_y and blt_y<=e1_y+50:
-            blt_x=-1
-            blt_y=-1
-            e1_x=random.randint(100,700)
-            e1_y=-60
-            e1_speed=random.randint(2,5)
-            pnt+=1
-    if blt_x>=e2_x and blt_x<=e2_x+50:
-        if blt_y>=e2_y and blt_y<=e2_y+50:
-            blt_x=-1
-            blt_y=-1
-            e2_x=random.randint(100,700)
-            e2_y=-60
-            e2_speed=random.randint(2,4)
-            pnt+=1
-    blt_y+=-blt_speed
+    for i in blts:
+        blt_x = i[0]
+        blt_y = i[1]
+        pygame.draw.circle(screen, "red", (blt_x, blt_y), 3)
+        for e in [e1_re, e2_re]:
+            if e.collidepoint(blt_x, blt_y):
+                blts.remove(i)
+                if e == e1_re:
+                    e1_x = random.randint(100, 700)
+                    e1_y = -60
+                    e1_speed = random.randint(2, 5)
+                    pnt += 1
+                else:
+                    e2_x = random.randint(100, 700)
+                    e2_y = -60
+                    e2_speed = random.randint(2, 4)
+                    pnt += 1
+    for i in blts:
+        i[1] -= blt_speed
+        if i[1] < 0:
+            blts.remove(i)
+
     e1_y+=e1_speed
     e1_y+=e1_speed
     e2_y+=e2_speed
